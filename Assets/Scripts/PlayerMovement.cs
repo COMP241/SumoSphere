@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
     {
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
-        Vector3 rotationAxis = new Vector3(vertical, 0, -horizontal);
+        Vector3 rotationAxis = new Vector3(vertical, 0, -horizontal).normalized;
         rb.AddTorque(rotationAxis);
     }
 }
