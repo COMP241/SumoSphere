@@ -1,6 +1,8 @@
 ﻿using System.Collections;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.Rendering;
 
 public class LevelLoader : MonoBehaviour
 {
@@ -9,7 +11,6 @@ public class LevelLoader : MonoBehaviour
     // Generated Fields
     private float horizontalScale;
     private float verticalScale;
-    private Vector3 wallHeight;
     private Vector3 adjust;
 
     // Editor Fields
@@ -18,7 +19,7 @@ public class LevelLoader : MonoBehaviour
     [SerializeField] private float allScale = 10f;
 
     [Header("Aesthetic")]
-    [SerializeField] private Material wallMaterial;
+    [SerializeField] private Material lineMaterial;
     
     private IEnumerator Start()
     {
@@ -59,8 +60,7 @@ public class LevelLoader : MonoBehaviour
             horizontalScale = 1f;
             verticalScale = 1f / map.Ratio;
         }
-
-        wallHeight = Vector3.up * allScale / 10f;
+        
         adjust = new Vector3(-horizontalScale * allScale / 2f, 0, verticalScale * allScale / 2f);
     }
 
@@ -77,11 +77,10 @@ public class LevelLoader : MonoBehaviour
         foreach (Line line in map.Lines)
         {
             // Set up wall object
-            GameObject wall = new GameObject("Wall", typeof(MeshCollider), typeof(MeshRenderer), typeof(MeshFilter));
+            GameObject wall = new GameObject("Wall", typeof(MeshCollider), typeof(MeshFilter), typeof(LineRenderer));
             Mesh mesh = new Mesh();
             wall.GetComponent<MeshFilter>().mesh = mesh;
             wall.GetComponent<MeshCollider>().sharedMesh = mesh;
-            wall.GetComponent<MeshRenderer>().material = wallMaterial;
             wall.transform.parent = playContainer;
             wall.transform.position = Vector3.zero;
 
@@ -97,8 +96,24 @@ public class LevelLoader : MonoBehaviour
             {
                 Vector3 floorVector = new Vector3(points[p].X * horizontalScale * allScale, 0f, -points[p].Y * verticalScale * allScale) + adjust;
                 vertices[p * 2] = floorVector;
-                vertices[p * 2 + 1] = floorVector + wallHeight;
+                vertices[p * 2 + 1] = floorVector + Vector3.up;
             }
+            
+            // Set up line renderer
+            LineRenderer renderer = wall.GetComponent<LineRenderer>();
+            renderer.positionCount = line.Points.Length;
+            renderer.SetPositions(vertices.Where((p, i) => i % 2 == 0).Select(p => p + Vector3.up * 0.1f).ToArray());
+            renderer.startWidth = 0.25f;
+            renderer.endWidth = 0.25f;
+            renderer.loop = line.Loop;
+            renderer.useWorldSpace = true;
+            renderer.shadowCastingMode = ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+            renderer.numCapVertices = 3;
+            renderer.numCornerVertices = 3;
+            renderer.material = lineMaterial;
+            renderer.startColor = Color.black;
+            renderer.endColor = Color.black;
 
             // Triangles generation. Black magic. Definitely don't touch.
             int len = vertices.Length; // Any modulus will *only* occur for looping lines
@@ -127,7 +142,6 @@ public class LevelLoader : MonoBehaviour
 
             mesh.vertices = vertices;
             mesh.triangles = triangles;
-            mesh.RecalculateNormals();
         }
     }
 }
