@@ -112,8 +112,8 @@ public class LevelLoader : MonoBehaviour
             renderer.numCapVertices = 3;
             renderer.numCornerVertices = 3;
             renderer.material = lineMaterial;
-            renderer.startColor = Color.black;
-            renderer.endColor = Color.black;
+            renderer.startColor = line.Color.GetColor();
+            renderer.endColor = line.Color.GetColor();
 
             // Triangles generation. Black magic. Definitely don't touch.
             int len = vertices.Length; // Any modulus will *only* occur for looping lines
@@ -130,7 +130,7 @@ public class LevelLoader : MonoBehaviour
                 triangles[i + 4] = start + 1;
                 triangles[i + 5] = (start + 3) % len;
 
-                // Reverse of previous two (so both sides of mesh are visible)
+                // Reverse of previous two (so both sides of mesh are working)
                 triangles[i + 6] = triangles[i + 2];
                 triangles[i + 7] = triangles[i + 1];
                 triangles[i + 8] = triangles[i];

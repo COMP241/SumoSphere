@@ -32,6 +32,32 @@ public enum MapColor
     Yellow = 6
 }
 
+public static class MapColorMethods
+{
+    public static Color GetColor(this MapColor color)
+    {
+        switch (color)
+        {
+            case MapColor.Black:
+                return Color.black;
+            case MapColor.Red:
+                return Color.red;
+            case MapColor.Green:
+                return Color.green;
+            case MapColor.Blue:
+                return Color.blue;
+            case MapColor.Cyan:
+                return Color.cyan;
+            case MapColor.Magenta:
+                return Color.magenta;
+            case MapColor.Yellow:
+                return Color.yellow;
+            default:
+                throw new ArgumentOutOfRangeException("color", color, null);
+        }
+    }
+}
+
 [Serializable]
 public class Line
 {
