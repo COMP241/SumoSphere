@@ -17,6 +17,7 @@ public class LevelLoader : MonoBehaviour
     [Header("Function")]
     [SerializeField] private Transform playContainer;
     [SerializeField] private float allScale = 10f;
+    [SerializeField] private GameObject[] objectsToEnable;
 
     [Header("Aesthetic")]
     [SerializeField] private Material lineMaterial;
@@ -46,6 +47,8 @@ public class LevelLoader : MonoBehaviour
         MakeFloor();
         MakeWalls();
         playContainer.gameObject.SetActive(true);
+        foreach (GameObject o in objectsToEnable)
+            o.SetActive(true);
     }
 
     private void SetConstants()
