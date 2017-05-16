@@ -14,14 +14,14 @@ public class TiltControl : MonoBehaviour
         {
             float horizontal = Input.GetAxis("Horizontal");
             float vertical = Input.GetAxis("Vertical");
-            targetRotation = Quaternion.Euler(20 * vertical, 0, -20 * horizontal);
+            targetRotation = Quaternion.Euler(-20 * vertical, 0, 20 * horizontal);
         }
-        DebugCanvas.SetText(targetRotation.ToString());
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, Time.deltaTime * 30f);
+        Physics.gravity = targetRotation * Vector3.down * 9.81f;
     }
 
     private static Quaternion ChangeAttitude(Quaternion q)
     {
-        return new Quaternion(q.y, 0.0f, -q.x, 1.0f);
+        return new Quaternion(-q.y, 0.0f, q.x, 1.0f);
     }
 }
