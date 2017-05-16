@@ -1,6 +1,8 @@
 ﻿using System.Collections;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.Rendering;
 
 public class LevelLoader : MonoBehaviour
 {
@@ -78,11 +80,10 @@ public class LevelLoader : MonoBehaviour
         foreach (Line line in map.Lines)
         {
             // Set up wall object
-            GameObject wall = new GameObject("Wall", typeof (MeshCollider), typeof (MeshFilter), typeof(MeshRenderer));
+            GameObject wall = new GameObject("Wall", typeof (MeshCollider), typeof (MeshFilter), typeof(LineRenderer));
             Mesh mesh = new Mesh();
             wall.GetComponent<MeshFilter>().mesh = mesh;
             wall.GetComponent<MeshCollider>().sharedMesh = mesh;
-            wall.GetComponent<MeshRenderer>().material = lineMaterial;
             wall.transform.parent = playContainer;
             wall.transform.position = Vector3.zero;
 
@@ -100,6 +101,18 @@ public class LevelLoader : MonoBehaviour
                 vertices[p * 2] = floorVector;
                 vertices[p * 2 + 1] = floorVector + Vector3.up;
             }
+
+            LineRenderer renderer = wall.GetComponent<LineRenderer>();
+            renderer.positionCount = line.Points.Length;
+            renderer.SetPositions(vertices.Where((p, i) => i % 2 == 0).Select(p => p + Vector3.up * 0.1f).ToArray());
+            renderer.startWidth = 0.1f;
+            renderer.endWidth = 0.1f;
+            renderer.loop = line.Loop;
+            renderer.shadowCastingMode = ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+            renderer.material = lineMaterial;
+            renderer.startColor = line.Color.GetColor();
+            renderer.endColor = line.Color.GetColor();
 
             // Triangles generation. Black magic. Definitely don't touch.
             int len = vertices.Length; // Any modulus will *only* occur for looping lines
