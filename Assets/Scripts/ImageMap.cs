@@ -69,6 +69,21 @@ public class Line
     {
         return string.Format("{0} {1} [{2}]", Color, Loop ? "Looping" : "Open", string.Join(",", Points.Select(p => p.ToString()).ToArray()));
     }
+
+    public Point AveragePoint()
+    {
+        Point result = new Point
+        {
+            X = Points.Average(p => p.X),
+            Y = Points.Average(p => p.Y)
+        };
+        return result;
+    }
+
+    public float AverageSqrDistanceFrom(Point p)
+    {
+        return Points.Average(pnt => (pnt.X - p.X) * (pnt.X - p.X) + (pnt.Y - p.Y) * (pnt.Y - p.Y));
+    }
 }
 
 [Serializable]
