@@ -201,6 +201,7 @@ MonoBehaviour:
   allScale: 10
   objectsToEnable:
   - {fileID: 1869744409}
+  player: {fileID: 1869744409}
   lineMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!4 &176448897
 Transform:
