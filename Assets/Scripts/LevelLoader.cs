@@ -48,6 +48,7 @@ public class LevelLoader : MonoBehaviour
         SetConstants();
         MakeFloor();
         MakeWalls();
+        MakeObstacles();
         playContainer.gameObject.SetActive(true);
         foreach (GameObject o in objectsToEnable)
             o.SetActive(true);
@@ -85,29 +86,47 @@ public class LevelLoader : MonoBehaviour
     {
         foreach (Line line in map.Lines.Where(l => l.Color == MapColor.Black))
         {
-            // Set up wall object
-            GameObject wall = new GameObject("Wall", typeof (MeshCollider), typeof (MeshFilter), typeof(LineRenderer));
+            GameObject wall = new GameObject("Wall", typeof (MeshCollider), typeof(LineRenderer));
 
             // Set up GameObject
             Mesh mesh = LineToMeshComponents(line);
-            wall.GetComponent<MeshFilter>().mesh = mesh;
             wall.GetComponent<MeshCollider>().sharedMesh = mesh;
             wall.transform.parent = playContainer;
             wall.transform.position = Vector3.zero;
-
-            // Set up line renderer
-            LineRenderer renderer = wall.GetComponent<LineRenderer>();
-            renderer.positionCount = line.Points.Length;
-            renderer.SetPositions(line.Points.Select(p => PointToWorldSpace(p) + Vector3.up * 0.1f).ToArray());
-            renderer.startWidth = 0.1f;
-            renderer.endWidth = 0.1f;
-            renderer.loop = line.Loop;
-            renderer.shadowCastingMode = ShadowCastingMode.Off;
-            renderer.receiveShadows = false;
-            renderer.material = lineMaterial;
-            renderer.startColor = Color.black;
-            renderer.endColor = Color.black;
+            SetUpLineRenderer(wall, line, Color.black);
         }
+    }
+
+    private void MakeObstacles()
+    {
+        foreach (Line line in map.Lines.Where(l => l.Color == MapColor.Red))
+        {
+            GameObject obstacle = new GameObject("Obstacle", typeof(MeshCollider), typeof(LineRenderer));
+
+            // Set up GameObject
+            Mesh mesh = LineToMeshComponents(line);
+            MeshCollider col = obstacle.GetComponent<MeshCollider>();
+            col.sharedMesh = mesh;
+            col.isTrigger = true;
+            obstacle.transform.parent = playContainer;
+            obstacle.transform.position = Vector3.zero;
+            SetUpLineRenderer(obstacle, line, Color.red);
+        }
+    }
+
+    private void SetUpLineRenderer(GameObject o, Line line, Color color)
+    {
+        LineRenderer renderer = o.GetComponent<LineRenderer>();
+        renderer.positionCount = line.Points.Length;
+        renderer.SetPositions(line.Points.Select(p => PointToWorldSpace(p) + Vector3.up * 0.1f).ToArray());
+        renderer.startWidth = 0.1f;
+        renderer.endWidth = 0.1f;
+        renderer.loop = line.Loop;
+        renderer.shadowCastingMode = ShadowCastingMode.Off;
+        renderer.receiveShadows = false;
+        renderer.material = lineMaterial;
+        renderer.startColor = color;
+        renderer.endColor = color;
     }
 
     private Vector3 PointToWorldSpace(Point p)
