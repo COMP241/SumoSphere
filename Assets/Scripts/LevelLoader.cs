@@ -99,6 +99,8 @@ public class LevelLoader : MonoBehaviour
 
     private void MakeObstacles()
     {
+        // TODO: Bore holes
+
         foreach (Line line in map.Lines.Where(l => l.Color == MapColor.Red))
         {
             GameObject obstacle = new GameObject("Obstacle", typeof(MeshCollider), typeof(LineRenderer));
@@ -107,7 +109,7 @@ public class LevelLoader : MonoBehaviour
             Mesh mesh = LineToMeshComponents(line);
             MeshCollider col = obstacle.GetComponent<MeshCollider>();
             col.sharedMesh = mesh;
-            col.isTrigger = true;
+//            col.isTrigger = true;
             obstacle.transform.parent = playContainer;
             obstacle.transform.position = Vector3.zero;
             SetUpLineRenderer(obstacle, line, Color.red);
