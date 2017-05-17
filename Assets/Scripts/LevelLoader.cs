@@ -49,6 +49,7 @@ public class LevelLoader : MonoBehaviour
         MakeFloor();
         MakeWalls();
         MakeObstacles();
+        MakeGoal();
         playContainer.gameObject.SetActive(true);
         foreach (GameObject o in objectsToEnable)
             o.SetActive(true);
@@ -113,6 +114,23 @@ public class LevelLoader : MonoBehaviour
             obstacle.transform.parent = playContainer;
             obstacle.transform.position = Vector3.zero;
             SetUpLineRenderer(obstacle, line, Color.red);
+        }
+    }
+
+    private void MakeGoal()
+    {
+        foreach (Line line in map.Lines.Where(l => l.Color == MapColor.Green))
+        {
+            GameObject obstacle = new GameObject("Obstacle", typeof(MeshCollider), typeof(LineRenderer));
+
+            // Set up GameObject
+            Mesh mesh = LineToMeshComponents(line);
+            MeshCollider col = obstacle.GetComponent<MeshCollider>();
+            col.sharedMesh = mesh;
+            //            col.isTrigger = true;
+            obstacle.transform.parent = playContainer;
+            obstacle.transform.position = Vector3.zero;
+            SetUpLineRenderer(obstacle, line, Color.green);
         }
     }
 
