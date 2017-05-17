@@ -24,7 +24,7 @@ public class LevelLoader : MonoBehaviour
     
     private IEnumerator Start()
     {
-        int id = 0;
+        int id = 1;
         using (UnityWebRequest www = UnityWebRequest.Get("http://papermap.tk/api/map/" + id))
         {
             yield return www.Send();
