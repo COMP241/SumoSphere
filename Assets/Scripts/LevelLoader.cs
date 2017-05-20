@@ -9,6 +9,7 @@ using UnityEngine.Rendering;
 public class LevelLoader : MonoBehaviour
 {
     private ImageMap map;
+    private bool loading;
 
     // Generated Fields
     private float horizontalScale;
@@ -30,6 +31,9 @@ public class LevelLoader : MonoBehaviour
 
     public void Load(string id)
     {
+        if (loading)
+            return;
+
         try
         {
             StartCoroutine(LoadLevel(int.Parse(id)));
@@ -42,6 +46,7 @@ public class LevelLoader : MonoBehaviour
     
     private IEnumerator LoadLevel(int id)
     {
+        loading = true;
         using (UnityWebRequest www = UnityWebRequest.Get("http://papermap.tk/api/map/" + id))
         {
             yield return www.Send();
@@ -57,6 +62,7 @@ public class LevelLoader : MonoBehaviour
                 UICanvas.DisplayError("Failed to get map.");
             }
         }
+        loading = false;
     }
 
     private void GenerateLevel()
