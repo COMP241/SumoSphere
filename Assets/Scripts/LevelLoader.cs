@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Linq;
+using Assets.Scripts.CSG;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Rendering;
@@ -12,7 +13,7 @@ public class LevelLoader : MonoBehaviour
     private float horizontalScale;
     private float verticalScale;
     private Vector3 adjust;
-    private Vector3 spawnPoint;
+    private GameObject floor;
 
     // Editor Fields
     [Header("Function")]
@@ -23,6 +24,7 @@ public class LevelLoader : MonoBehaviour
 
     [Header("Aesthetic")]
     [SerializeField] private Material lineMaterial;
+    [SerializeField] private Material floorMaterial;
     
     private IEnumerator Start()
     {
@@ -77,10 +79,10 @@ public class LevelLoader : MonoBehaviour
 
     private void MakeFloor()
     {
-        GameObject floor = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
         floor.transform.parent = playContainer;
-        floor.transform.position = Vector3.zero;
-        floor.transform.localScale = new Vector3(horizontalScale * allScale / 10f, 1, verticalScale * allScale / 10f);
+        floor.transform.position = Vector3.down * 0.25f;
+        floor.transform.localScale = new Vector3(horizontalScale * allScale, 0.5f, verticalScale * allScale);
     }
 
     private void MakeWalls()
@@ -90,7 +92,7 @@ public class LevelLoader : MonoBehaviour
             GameObject wall = new GameObject("Wall", typeof (MeshCollider), typeof(LineRenderer));
 
             // Set up GameObject
-            Mesh mesh = LineToMeshComponents(line);
+            Mesh mesh = LineToMeshComponents(line, Vector3.zero);
             wall.GetComponent<MeshCollider>().sharedMesh = mesh;
             wall.transform.parent = playContainer;
             wall.transform.position = Vector3.zero;
@@ -104,33 +106,32 @@ public class LevelLoader : MonoBehaviour
 
         foreach (Line line in map.Lines.Where(l => l.Color == MapColor.Red))
         {
-            GameObject obstacle = new GameObject("Obstacle", typeof(MeshCollider), typeof(LineRenderer));
+            Mesh mesh = Triangulator.PolygonExtrude(line.Points.Select(PointToWorldSpace).Select(w => new Vector2(w.x, w.z)).ToArray(), Vector3.down, 2f);
 
             // Set up GameObject
-            Mesh mesh = LineToMeshComponents(line);
-            MeshCollider col = obstacle.GetComponent<MeshCollider>();
-            col.sharedMesh = mesh;
-//            col.isTrigger = true;
-            obstacle.transform.parent = playContainer;
-            obstacle.transform.position = Vector3.zero;
-            SetUpLineRenderer(obstacle, line, Color.red);
+            GameObject obstacle = new GameObject();
+            obstacle.AddComponent<MeshFilter>().sharedMesh = mesh;
+
+            Mesh newFloor = CSG.Subtract(floor, obstacle);
+            GameObject composite = new GameObject("Floor");
+            composite.AddComponent<MeshFilter>().sharedMesh = newFloor;
+
+            Destroy(obstacle);
+            Destroy(floor);
+            floor = composite;
         }
+
+        // Finalise floor
+        floor.AddComponent<MeshCollider>().sharedMesh = floor.GetComponent<MeshFilter>().mesh;
+        floor.AddComponent<MeshRenderer>().material = floorMaterial;
+        floor.transform.parent = playContainer;
     }
 
     private void MakeGoal()
     {
         foreach (Line line in map.Lines.Where(l => l.Color == MapColor.Green))
         {
-            GameObject obstacle = new GameObject("Obstacle", typeof(MeshCollider), typeof(LineRenderer));
-
-            // Set up GameObject
-            Mesh mesh = LineToMeshComponents(line);
-            MeshCollider col = obstacle.GetComponent<MeshCollider>();
-            col.sharedMesh = mesh;
-            //            col.isTrigger = true;
-            obstacle.transform.parent = playContainer;
-            obstacle.transform.position = Vector3.zero;
-            SetUpLineRenderer(obstacle, line, Color.green);
+            // TODO: Game play
         }
     }
 
@@ -138,7 +139,7 @@ public class LevelLoader : MonoBehaviour
     {
         LineRenderer renderer = o.GetComponent<LineRenderer>();
         renderer.positionCount = line.Points.Length;
-        renderer.SetPositions(line.Points.Select(p => PointToWorldSpace(p) + Vector3.up * 0.1f).ToArray());
+        renderer.SetPositions(line.Points.Select(p => PointToWorldSpace(p) + Vector3.up * 0.5f).ToArray());
         renderer.startWidth = 0.1f;
         renderer.endWidth = 0.1f;
         renderer.loop = line.Loop;
@@ -154,7 +155,7 @@ public class LevelLoader : MonoBehaviour
         return new Vector3(p.X * horizontalScale * allScale, 0f, -p.Y * verticalScale * allScale) + adjust;
     }
 
-    private Mesh LineToMeshComponents(Line line)
+    private Mesh LineToMeshComponents(Line line, Vector3 offset, float height = 1f)
     {
         Mesh mesh = new Mesh();
         Point[] points = line.Points;
@@ -166,9 +167,9 @@ public class LevelLoader : MonoBehaviour
         // Vertices generation. Grey magic. Probably don't touch.
         for (int p = 0; p < points.Length; p++)
         {
-            Vector3 floorVector = PointToWorldSpace(points[p]);
+            Vector3 floorVector = PointToWorldSpace(points[p]) + offset;
             vertices[p * 2] = floorVector;
-            vertices[p * 2 + 1] = floorVector + Vector3.up;
+            vertices[p * 2 + 1] = floorVector + Vector3.up * height;
         }
 
         // Triangles generation. Black magic. Definitely don't touch.
