@@ -22,6 +22,11 @@ public class TiltControl : MonoBehaviour
         pivot.rotation = targetRotation;
     }
 
+    public static void ResetGravity()
+    {
+        Physics.gravity = Vector3.down * 9.81f;
+    }
+
     private static Quaternion ChangeAttitude(Quaternion q)
     {
         return new Quaternion(-q.y, 0.0f, q.x, 1.0f);

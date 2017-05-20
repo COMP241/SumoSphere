@@ -16,19 +16,21 @@ public class Player : MonoBehaviour
     private void Update()
     {
         if (transform.position.y < resetY)
-            Respawn();
+            GameController.Respawn();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Goal")
-            Respawn();
+            GameController.Win();
     }
-
-    private void Respawn()
+    
+    public void ResetVelocity()
     {
+        if (rb == null)
+            return;
+
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-        GameController.Respawn();
     }
 }

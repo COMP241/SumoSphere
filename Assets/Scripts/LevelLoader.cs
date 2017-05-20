@@ -8,6 +8,8 @@ using UnityEngine.Rendering;
 
 public class LevelLoader : MonoBehaviour
 {
+    private static LevelLoader instance;
+
     private ImageMap map;
     private bool loading;
 
@@ -19,7 +21,8 @@ public class LevelLoader : MonoBehaviour
 
     // Editor Fields
     [Header("Function")]
-    [SerializeField] private Transform playContainer;
+    [SerializeField] private Transform levelContainer;
+    [SerializeField] private GameObject playContainer;
     [SerializeField] private float allScale = 10f;
 
     [Header("Prefabs")]
@@ -28,6 +31,14 @@ public class LevelLoader : MonoBehaviour
     [Header("Aesthetic")]
     [SerializeField] private Material lineMaterial;
     [SerializeField] private Material floorMaterial;
+
+    private void Start()
+    {
+        if (instance == null)
+            instance = GetComponent<LevelLoader>();
+        else
+            Destroy(gameObject);
+    }
 
     public void Load(string id)
     {
@@ -40,14 +51,14 @@ public class LevelLoader : MonoBehaviour
         }
         catch (FormatException)
         {
-            UICanvas.DisplayError("Level ID in wrong format.");
+            GameStartCanvas.DisplayError("Level ID in wrong format.");
         }
     }
     
     private IEnumerator LoadLevel(int id)
     {
         loading = true;
-        UICanvas.DisplayInfo("Loading...");
+        GameStartCanvas.DisplayInfo("Loading...");
         using (UnityWebRequest www = UnityWebRequest.Get("http://papermap.tk/api/map/" + id))
         {
             yield return www.Send();
@@ -60,7 +71,7 @@ public class LevelLoader : MonoBehaviour
             else
             {
                 Debug.Log(www.error);
-                UICanvas.DisplayError("Failed to get map.");
+                GameStartCanvas.DisplayError("Failed to get map.");
             }
         }
         loading = false;
@@ -75,16 +86,16 @@ public class LevelLoader : MonoBehaviour
             MakeWalls();
             MakeObstacles();
             MakeGoals();
-            playContainer.gameObject.SetActive(true);
-            UICanvas.Clear();
+            playContainer.SetActive(true);
+            GameStartCanvas.Hide();
         }
         catch (InvalidOperationException)
         {
-            UICanvas.DisplayError("Map missing spawn.");
+            GameStartCanvas.DisplayError("Map missing spawn.");
         }
         catch (NullReferenceException)
         {
-            UICanvas.DisplayError("Failed to get map.");
+            GameStartCanvas.DisplayError("Failed to get map.");
         }
     }
 
@@ -111,7 +122,7 @@ public class LevelLoader : MonoBehaviour
     private void MakeFloor()
     {
         floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        floor.transform.parent = playContainer;
+        floor.transform.parent = levelContainer;
         floor.transform.position = Vector3.down * 0.25f;
         floor.transform.localScale = new Vector3(horizontalScale * allScale, 0.5f, verticalScale * allScale);
     }
@@ -125,7 +136,7 @@ public class LevelLoader : MonoBehaviour
             // Set up GameObject
             Mesh mesh = LineToMeshComponents(line, Vector3.zero);
             wall.GetComponent<MeshCollider>().sharedMesh = mesh;
-            wall.transform.parent = playContainer;
+            wall.transform.parent = levelContainer;
             wall.transform.position = Vector3.zero;
             SetUpLineRenderer(wall, line, Color.black);
         }
@@ -155,14 +166,14 @@ public class LevelLoader : MonoBehaviour
         // Finalise floor
         floor.AddComponent<MeshCollider>().sharedMesh = floor.GetComponent<MeshFilter>().mesh;
         floor.AddComponent<MeshRenderer>().material = floorMaterial;
-        floor.transform.parent = playContainer;
+        floor.transform.parent = levelContainer;
     }
 
     private void MakeGoals()
     {
         foreach (Line line in map.Lines.Where(l => l.Color == MapColor.Green))
         {
-            Instantiate(goalPrefab, PointToWorldSpace(line.AveragePoint()), Quaternion.identity, playContainer);
+            Instantiate(goalPrefab, PointToWorldSpace(line.AveragePoint()), Quaternion.identity, levelContainer);
         }
     }
 
@@ -232,5 +243,18 @@ public class LevelLoader : MonoBehaviour
         mesh.triangles = triangles;
 
         return mesh;
+    }
+
+    public static void Unload()
+    {
+        Destroy(instance.levelContainer.gameObject);
+        GameObject newContainer = new GameObject("Level Container");
+        newContainer.transform.parent = instance.playContainer.transform;
+        instance.levelContainer = newContainer.transform;
+    }
+
+    public static void SetActive(bool value)
+    {
+        instance.playContainer.SetActive(value);
     }
 }

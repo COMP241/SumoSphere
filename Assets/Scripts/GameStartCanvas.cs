@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class UICanvas : MonoBehaviour
+public class GameStartCanvas : MonoBehaviour
 {
-    private static UICanvas instance;
+    private static GameStartCanvas instance;
 
     // Editor Fields
     [SerializeField] private Text displayText;
@@ -11,7 +11,7 @@ public class UICanvas : MonoBehaviour
     private void Start()
     {
         if (instance == null)
-            instance = GetComponent<UICanvas>();
+            instance = GetComponent<GameStartCanvas>();
         else
             Destroy(gameObject);
     }
@@ -28,8 +28,14 @@ public class UICanvas : MonoBehaviour
         instance.displayText.text = message;
     }
 
-    public static void Clear()
+    public static void Hide()
     {
+        instance.displayText.text = "";
         instance.gameObject.SetActive(false);
+    }
+
+    public static void Show()
+    {
+        instance.gameObject.SetActive(true);
     }
 }
