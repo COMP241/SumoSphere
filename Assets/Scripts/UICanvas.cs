@@ -6,7 +6,7 @@ public class UICanvas : MonoBehaviour
     private static UICanvas instance;
 
     // Editor Fields
-    [SerializeField] private Text errorText;
+    [SerializeField] private Text displayText;
 
     private void Start()
     {
@@ -16,9 +16,16 @@ public class UICanvas : MonoBehaviour
             Destroy(gameObject);
     }
 
-    public static void DisplayError(string error)
+    public static void DisplayError(string message)
     {
-        instance.errorText.text = error;
+        instance.displayText.color = Color.red;
+        instance.displayText.text = message;
+    }
+
+    public static void DisplayInfo(string message)
+    {
+        instance.displayText.color = Color.black;
+        instance.displayText.text = message;
     }
 
     public static void Clear()

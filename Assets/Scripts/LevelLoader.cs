@@ -47,6 +47,7 @@ public class LevelLoader : MonoBehaviour
     private IEnumerator LoadLevel(int id)
     {
         loading = true;
+        UICanvas.DisplayInfo("Loading...");
         using (UnityWebRequest www = UnityWebRequest.Get("http://papermap.tk/api/map/" + id))
         {
             yield return www.Send();
