@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
 using Assets.Scripts.CSG;
 using UnityEngine;
@@ -26,10 +27,21 @@ public class LevelLoader : MonoBehaviour
     [Header("Aesthetic")]
     [SerializeField] private Material lineMaterial;
     [SerializeField] private Material floorMaterial;
-    
-    private IEnumerator Start()
+
+    public void Load(string id)
     {
-        int id = 1;
+        try
+        {
+            StartCoroutine(LoadLevel(int.Parse(id)));
+        }
+        catch (FormatException)
+        {
+            UICanvas.DisplayError("Level ID in wrong format.");
+        }
+    }
+    
+    private IEnumerator LoadLevel(int id)
+    {
         using (UnityWebRequest www = UnityWebRequest.Get("http://papermap.tk/api/map/" + id))
         {
             yield return www.Send();
@@ -42,18 +54,31 @@ public class LevelLoader : MonoBehaviour
             else
             {
                 Debug.Log(www.error);
+                UICanvas.DisplayError("Failed to get map.");
             }
         }
     }
 
     private void GenerateLevel()
     {
-        SetConstants();
-        MakeFloor();
-        MakeWalls();
-        MakeObstacles();
-        MakeGoals();
-        playContainer.gameObject.SetActive(true);
+        try
+        {
+            SetConstants();
+            MakeFloor();
+            MakeWalls();
+            MakeObstacles();
+            MakeGoals();
+            playContainer.gameObject.SetActive(true);
+            UICanvas.Clear();
+        }
+        catch (InvalidOperationException)
+        {
+            UICanvas.DisplayError("Map missing spawn.");
+        }
+        catch (NullReferenceException)
+        {
+            UICanvas.DisplayError("Failed to get map.");
+        }
     }
 
     private void SetConstants()
