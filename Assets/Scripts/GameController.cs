@@ -7,6 +7,8 @@ public class GameController : MonoBehaviour
 
     // Generated Fields
     private static Vector3 spawnPoint = Vector3.up * 0.5f;
+    private static float time = 0f;
+    private bool timeRunning = false;
 
     // Editor Fields
     [SerializeField] private Player player;
@@ -19,16 +21,33 @@ public class GameController : MonoBehaviour
             Destroy(gameObject);
     }
 
-    public static void Spawn(Vector3 point)
+    private void Update()
+    {
+        if (timeRunning)
+        {
+            time += Time.deltaTime;
+            MainCanvas.SetTime(time);
+        }
+    }
+
+    public static void SetSpawn(Vector3 point)
     {
         spawnPoint = point;
+    }
+
+    public static void Begin()
+    {
         instance.RestartGame();
     }
 
     public void RestartGame()
     {
         Respawn();
+        time = 0f;
+        timeRunning = true;
         LevelLoader.SetActive(true);
+        GameStartCanvas.Hide();
+        MainCanvas.Show();
         GameEndCanvas.Hide();
     }
     
@@ -40,14 +59,16 @@ public class GameController : MonoBehaviour
 
     public static void Win()
     {
+        instance.timeRunning = false;
         LevelLoader.SetActive(false);
+        MainCanvas.Hide();
         GameEndCanvas.Show();
     }
 
     public void LoadNew()
     {
         LevelLoader.Unload();
-        GameEndCanvas.Hide();
         GameStartCanvas.Show();
+        GameEndCanvas.Hide();
     }
 }

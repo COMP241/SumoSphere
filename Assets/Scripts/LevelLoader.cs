@@ -87,7 +87,7 @@ public class LevelLoader : MonoBehaviour
             MakeObstacles();
             MakeGoals();
             playContainer.SetActive(true);
-            GameStartCanvas.Hide();
+            GameController.Begin();
         }
         catch (InvalidOperationException)
         {
@@ -115,7 +115,7 @@ public class LevelLoader : MonoBehaviour
         adjust = new Vector3(-horizontalScale * allScale / 2f, 0, verticalScale * allScale / 2f);
 
         Line spawnLine = map.Lines.First(l => l.Color == MapColor.Blue);
-        GameController.Spawn(PointToWorldSpace(spawnLine.AveragePoint()) + Vector3.up * 0.5f);
+        GameController.SetSpawn(PointToWorldSpace(spawnLine.AveragePoint()) + Vector3.up * 0.5f);
         // TODO: Scaling player / map appropriately
     }
 
