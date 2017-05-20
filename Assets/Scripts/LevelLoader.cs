@@ -19,8 +19,9 @@ public class LevelLoader : MonoBehaviour
     [Header("Function")]
     [SerializeField] private Transform playContainer;
     [SerializeField] private float allScale = 10f;
-    [SerializeField] private GameObject[] objectsToEnable;
-    [SerializeField] private GameObject player;
+
+    [Header("Prefabs")]
+    [SerializeField] private GameObject goalPrefab;
 
     [Header("Aesthetic")]
     [SerializeField] private Material lineMaterial;
@@ -51,10 +52,8 @@ public class LevelLoader : MonoBehaviour
         MakeFloor();
         MakeWalls();
         MakeObstacles();
-        MakeGoal();
+        MakeGoals();
         playContainer.gameObject.SetActive(true);
-        foreach (GameObject o in objectsToEnable)
-            o.SetActive(true);
     }
 
     private void SetConstants()
@@ -73,7 +72,7 @@ public class LevelLoader : MonoBehaviour
         adjust = new Vector3(-horizontalScale * allScale / 2f, 0, verticalScale * allScale / 2f);
 
         Line spawnLine = map.Lines.First(l => l.Color == MapColor.Blue);
-        player.transform.position = PointToWorldSpace(spawnLine.AveragePoint()) + Vector3.up * 0.5f;
+        GameController.Spawn(PointToWorldSpace(spawnLine.AveragePoint()) + Vector3.up * 0.5f);
         // TODO: Scaling player / map appropriately
     }
 
@@ -127,11 +126,11 @@ public class LevelLoader : MonoBehaviour
         floor.transform.parent = playContainer;
     }
 
-    private void MakeGoal()
+    private void MakeGoals()
     {
         foreach (Line line in map.Lines.Where(l => l.Color == MapColor.Green))
         {
-            // TODO: Game play
+            Instantiate(goalPrefab, PointToWorldSpace(line.AveragePoint()), Quaternion.identity, playContainer);
         }
     }
 
