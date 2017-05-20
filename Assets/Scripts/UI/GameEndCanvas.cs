@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class GameEndCanvas : MonoBehaviour
 {
     private static GameEndCanvas instance;
 
     // Editor Fields
+    [SerializeField] private Text timeText;
 
     private void Start()
     {
@@ -13,6 +15,11 @@ public class GameEndCanvas : MonoBehaviour
         else
             Destroy(gameObject);
         Hide();
+    }
+
+    public static void SetTime(float seconds)
+    {
+        instance.timeText.text = seconds.ToString("0.00");
     }
 
     public static void Hide()

@@ -63,6 +63,7 @@ public class GameController : MonoBehaviour
         LevelLoader.SetActive(false);
         MainCanvas.Hide();
         GameEndCanvas.Show();
+        GameEndCanvas.SetTime(time);
     }
 
     public void LoadNew()
