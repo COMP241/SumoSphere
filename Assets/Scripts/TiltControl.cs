@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Diagnostics;
+using UnityEngine;
 
 public class TiltControl : MonoBehaviour
 {
@@ -19,6 +20,12 @@ public class TiltControl : MonoBehaviour
             targetRotation = Quaternion.Euler(-30 * vertical, 0, 30 * horizontal);
         }
         Physics.gravity = targetRotation * Vector3.down * 9.81f;
+        Pivot(targetRotation);
+    }
+
+    [Conditional("UNITY_ANDROID")]
+    private void Pivot(Quaternion targetRotation)
+    {
         pivot.rotation = targetRotation;
     }
 
