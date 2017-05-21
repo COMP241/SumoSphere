@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.CSG;
 using UnityEngine;
@@ -90,9 +91,9 @@ public class LevelLoader : MonoBehaviour
             playContainer.SetActive(true);
             GameController.Begin();
         }
-        catch (InvalidOperationException)
+        catch (LevelStructureException e)
         {
-            GameStartCanvas.DisplayError("Map missing spawn.");
+            GameStartCanvas.DisplayError(e.Message);
         }
         catch (NullReferenceException)
         {
@@ -118,7 +119,17 @@ public class LevelLoader : MonoBehaviour
 
     private void MakeSpawn()
     {
-        Line spawnLine = map.Lines.First(l => l.Color == MapColor.Blue);
+        Line spawnLine;
+
+        try
+        {
+            spawnLine = map.Lines.First(l => l.Color == MapColor.Blue);
+        }
+        catch (InvalidOperationException)
+        {
+            throw new LevelStructureException("No spawn in level."); ;
+        }
+
         Point averagePoint = spawnLine.AveragePoint();
         GameController.SetSpawn(PointToWorldSpace(averagePoint) + Vector3.up * 0.5f);
         Player p = playContainer.GetComponentInChildren<Player>();
@@ -150,8 +161,6 @@ public class LevelLoader : MonoBehaviour
 
     private void MakeObstacles()
     {
-        // TODO: Bore holes
-
         foreach (Line line in map.Lines.Where(l => l.Color == MapColor.Red))
         {
             Mesh mesh = Triangulator.PolygonExtrude(line.Points.Select(PointToWorldSpace).Select(w => new Vector2(w.x, w.z)).ToArray(), Vector3.down, 2f);
@@ -177,9 +186,17 @@ public class LevelLoader : MonoBehaviour
 
     private void MakeGoals()
     {
-        foreach (Line line in map.Lines.Where(l => l.Color == MapColor.Green))
+        IEnumerable<Line> lines = map.Lines.Where(l => l.Color == MapColor.Green);
+
+        if (lines.Count() == 0)
+            throw new LevelStructureException("No goals in level.");
+
+        foreach (Line line in lines)
         {
-            Instantiate(goalPrefab, PointToWorldSpace(line.AveragePoint()), Quaternion.identity, levelContainer);
+            Point averagePoint = line.AveragePoint();
+            GameObject goal = Instantiate(goalPrefab, PointToWorldSpace(averagePoint), Quaternion.identity, levelContainer);
+            float scale = 2f * PointScaleToWorldScale(Mathf.Sqrt(line.AverageSqrDistanceFrom(averagePoint)));
+            goal.transform.localScale = new Vector3(scale, 1, scale);
         }
     }
 
@@ -267,5 +284,16 @@ public class LevelLoader : MonoBehaviour
     public static void SetActive(bool value)
     {
         instance.playContainer.SetActive(value);
+    }
+}
+
+public class LevelStructureException : Exception
+{
+    public LevelStructureException() : base()
+    {
+    }
+
+    public LevelStructureException(string message) : base(message)
+    {
     }
 }
