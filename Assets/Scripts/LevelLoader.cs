@@ -82,6 +82,7 @@ public class LevelLoader : MonoBehaviour
         try
         {
             SetConstants();
+            MakeSpawn();
             MakeFloor();
             MakeWalls();
             MakeObstacles();
@@ -113,10 +114,15 @@ public class LevelLoader : MonoBehaviour
         }
         
         adjust = new Vector3(-horizontalScale * allScale / 2f, 0, verticalScale * allScale / 2f);
+    }
 
+    private void MakeSpawn()
+    {
         Line spawnLine = map.Lines.First(l => l.Color == MapColor.Blue);
-        GameController.SetSpawn(PointToWorldSpace(spawnLine.AveragePoint()) + Vector3.up * 0.5f);
-        // TODO: Scaling player / map appropriately
+        Point averagePoint = spawnLine.AveragePoint();
+        GameController.SetSpawn(PointToWorldSpace(averagePoint) + Vector3.up * 0.5f);
+        Player p = playContainer.GetComponentInChildren<Player>();
+        p.transform.localScale = Vector3.one * 2f * PointScaleToWorldScale(Mathf.Sqrt(spawnLine.AverageSqrDistanceFrom(averagePoint)));
     }
 
     private void MakeFloor()
@@ -195,6 +201,11 @@ public class LevelLoader : MonoBehaviour
     private Vector3 PointToWorldSpace(Point p)
     {
         return new Vector3(p.X * horizontalScale * allScale, 0f, -p.Y * verticalScale * allScale) + adjust;
+    }
+
+    private float PointScaleToWorldScale(float f)
+    {
+        return f * allScale * Mathf.Max(verticalScale, horizontalScale);
     }
 
     private Mesh LineToMeshComponents(Line line, Vector3 offset, float height = 1f)
