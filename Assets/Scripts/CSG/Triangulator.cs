@@ -122,11 +122,28 @@ public class Triangulator
         return ((aCROSSbp >= 0.0f) && (bCROSScp >= 0.0f) && (cCROSSap >= 0.0f));
     }
 
+    public static bool PolygonCW(Vector2[] poly)
+    {
+        // This method taken based on https://stackoverflow.com/a/1165943
+
+        float signedArea = 0;
+
+        for (int i = 0; i < poly.Length; i++)
+        {
+            Vector2 a = poly[i];
+            Vector2 b = poly[(i + 1) % poly.Length];
+            signedArea += (a.x * b.y - b.x * a.y);
+        }
+
+        return signedArea < 0;
+    }
+
     public static Mesh PolygonExtrude(Vector2[] poly, Vector3 offset, float height = 1f)
     {
         // This method taken from https://forum.unity3d.com/threads/trying-extrude-a-2d-polygon-to-create-a-mesh.102629/
 
         // convert polygon to triangles
+        poly = PolygonCW(poly) ? poly : poly.Reverse().ToArray();
         Triangulator triangulator = new Triangulator(poly);
         int[] tris = triangulator.Triangulate();
         Mesh m = new Mesh();
