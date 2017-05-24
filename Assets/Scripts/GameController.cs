@@ -48,7 +48,12 @@ public class GameController : MonoBehaviour
         MainCanvas.Show();
         GameEndCanvas.Hide();
     }
-    
+
+    public void Respawn_()
+    {
+        Respawn();
+    }
+
     public static void Respawn()
     {
         time = 0f;
@@ -69,6 +74,8 @@ public class GameController : MonoBehaviour
     public void LoadNew()
     {
         LevelLoader.Unload();
+        LevelLoader.SetActive(false);
+        MainCanvas.Hide();
         GameStartCanvas.Show();
         GameEndCanvas.Hide();
     }
