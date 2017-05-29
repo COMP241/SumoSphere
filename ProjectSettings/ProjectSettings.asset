@@ -211,8 +211,8 @@ PlayerSettings:
   AndroidTargetDevice: 0
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: 
-  AndroidKeyaliasName: 
+  AndroidKeystoreName: D:/Documents/Unity Projects/TiltMaze/user.keystore
+  AndroidKeyaliasName: default
   AndroidTVCompatibility: 1
   AndroidIsGame: 1
   androidEnableBanner: 1
