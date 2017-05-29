@@ -8,7 +8,7 @@ public class GameController : MonoBehaviour
     // Generated Fields
     private static Vector3 spawnPoint = Vector3.up * 0.5f;
     private static float time = 0f;
-    private bool timeRunning = false;
+    private static bool timeRunning = false;
 
     // Editor Fields
     [SerializeField] private Player player;
@@ -43,23 +43,28 @@ public class GameController : MonoBehaviour
     public void RestartGame()
     {
         Respawn();
-        time = 0f;
-        timeRunning = true;
         LevelLoader.SetActive(true);
         GameStartCanvas.Hide();
         MainCanvas.Show();
         GameEndCanvas.Hide();
     }
-    
+
+    public void Respawn_()
+    {
+        Respawn();
+    }
+
     public static void Respawn()
     {
+        time = 0f;
+        timeRunning = true;
         instance.player.transform.position = spawnPoint;
         instance.player.ResetVelocity();
     }
 
     public static void Win()
     {
-        instance.timeRunning = false;
+        timeRunning = false;
         LevelLoader.SetActive(false);
         MainCanvas.Hide();
         GameEndCanvas.Show();
@@ -69,6 +74,8 @@ public class GameController : MonoBehaviour
     public void LoadNew()
     {
         LevelLoader.Unload();
+        LevelLoader.SetActive(false);
+        MainCanvas.Hide();
         GameStartCanvas.Show();
         GameEndCanvas.Hide();
     }
