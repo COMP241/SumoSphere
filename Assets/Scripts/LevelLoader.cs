@@ -32,6 +32,7 @@ public class LevelLoader : MonoBehaviour
     [Header("Aesthetic")]
     [SerializeField] private Material lineMaterial;
     [SerializeField] private Material floorMaterial;
+    [SerializeField] private Material wallMaterial;
 
     private void Start()
     {
@@ -148,14 +149,16 @@ public class LevelLoader : MonoBehaviour
     {
         foreach (Line line in map.Lines.Where(l => l.Color == MapColor.Black))
         {
-            GameObject wall = new GameObject("Wall", typeof (MeshCollider), typeof(LineRenderer));
+            GameObject wall = new GameObject("Wall", typeof (MeshCollider), typeof(MeshFilter), /*typeof(LineRenderer),*/ typeof(MeshRenderer));
 
             // Set up GameObject
             Mesh mesh = LineToMeshComponents(line, Vector3.zero);
             wall.GetComponent<MeshCollider>().sharedMesh = mesh;
+            wall.GetComponent<MeshRenderer>().sharedMaterial = wallMaterial;
+            wall.GetComponent<MeshFilter>().sharedMesh = mesh;
             wall.transform.parent = levelContainer;
             wall.transform.position = Vector3.zero;
-            SetUpLineRenderer(wall, line, Color.black);
+//            SetUpLineRenderer(wall, line, Color.black);
         }
     }
 
@@ -231,8 +234,8 @@ public class LevelLoader : MonoBehaviour
         Point[] points = line.Points;
 
         // Set up required collections for mesh
-        Vector3[] vertices = new Vector3[line.Points.Length * 2];
-        int[] triangles = new int[(vertices.Length - (line.Loop ? 0 : 2)) * 6];
+        Vector3[] vertices = new Vector3[line.Points.Length * 4];
+        int[] triangles = new int[(vertices.Length - (line.Loop ? 0 : 4)) * 3];
 
         // Vertices generation. Grey magic. Probably don't touch.
         for (int p = 0; p < points.Length; p++)
@@ -240,6 +243,9 @@ public class LevelLoader : MonoBehaviour
             Vector3 floorVector = PointToWorldSpace(points[p]) + offset;
             vertices[p * 2] = floorVector;
             vertices[p * 2 + 1] = floorVector + Vector3.up * height;
+
+            vertices[p * 2 + vertices.Length / 2] = floorVector;
+            vertices[p * 2 + 1 + vertices.Length / 2] = floorVector + Vector3.up * height;
         }
 
         // Triangles generation. Black magic. Definitely don't touch.
@@ -258,17 +264,31 @@ public class LevelLoader : MonoBehaviour
             triangles[i + 5] = (start + 3) % len;
 
             // Reverse of previous two (so both sides of mesh are working)
-            triangles[i + 6] = triangles[i + 2];
-            triangles[i + 7] = triangles[i + 1];
-            triangles[i + 8] = triangles[i];
+            triangles[i + 6] = triangles[i + 2] + len / 2;
+            triangles[i + 7] = triangles[i + 1] + len / 2;
+            triangles[i + 8] = triangles[i] + len / 2;
 
-            triangles[i + 9] = triangles[i + 5];
-            triangles[i + 10] = triangles[i + 4];
-            triangles[i + 11] = triangles[i + 3];
+            triangles[i + 9] = triangles[i + 5] + len / 2;
+            triangles[i + 10] = triangles[i + 4] + len / 2;
+            triangles[i + 11] = triangles[i + 3] + len / 2;
+        }
+
+        // UV generation
+        Vector2[] uvs = new Vector2[vertices.Length];
+        float horizontal = 0f;
+        int halflen = uvs.Length / 2;
+        for (int i = 0; i < halflen; i+=2)
+        {
+            uvs[i] = uvs[i + halflen] = new Vector2(horizontal, 1f);
+            uvs[i + 1] = uvs[i + 1 + halflen] = new Vector2(horizontal, 0f);
+            if (i < halflen - 2)
+                horizontal += Vector2.Distance(vertices[i], vertices[i + 4]);
         }
 
         mesh.vertices = vertices;
         mesh.triangles = triangles;
+        mesh.uv = uvs;
+        mesh.RecalculateNormals();
 
         return mesh;
     }
