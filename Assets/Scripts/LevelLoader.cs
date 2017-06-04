@@ -183,7 +183,10 @@ public class LevelLoader : MonoBehaviour
 
         // Finalise floor
         floor.AddComponent<MeshCollider>().sharedMesh = floor.GetComponent<MeshFilter>().mesh;
-        floor.AddComponent<MeshRenderer>().material = floorMaterial;
+        if (floor.GetComponent<MeshRenderer>() == null)
+            floor.AddComponent<MeshRenderer>().material = floorMaterial;
+        else
+            floor.GetComponent<MeshRenderer>().material = floorMaterial;
         floor.transform.parent = levelContainer;
     }
 
@@ -234,11 +237,12 @@ public class LevelLoader : MonoBehaviour
         Point[] points = line.Points;
 
         // Set up required collections for mesh
-        Vector3[] vertices = new Vector3[line.Points.Length * 4];
-        int[] triangles = new int[(vertices.Length - (line.Loop ? 0 : 4)) * 3];
+        Vector3[] vertices = new Vector3[(line.Points.Length + (line.Loop ? 1 : 0)) * 4];
+        int[] triangles = new int[(vertices.Length - 4) * 3];
 
         // Vertices generation. Grey magic. Probably don't touch.
-        for (int p = 0; p < points.Length; p++)
+        int p = 0;
+        for (; p < points.Length; p++)
         {
             Vector3 floorVector = PointToWorldSpace(points[p]) + offset;
             vertices[p * 2] = floorVector;
@@ -247,9 +251,18 @@ public class LevelLoader : MonoBehaviour
             vertices[p * 2 + vertices.Length / 2] = floorVector;
             vertices[p * 2 + 1 + vertices.Length / 2] = floorVector + Vector3.up * height;
         }
+        if (line.Loop)
+        {
+            Vector3 floorVector = PointToWorldSpace(points[0]) + offset;
+            vertices[p * 2] = floorVector;
+            vertices[p * 2 + 1] = floorVector + Vector3.up * height;
+
+            vertices[p * 2 + vertices.Length / 2] = floorVector;
+            vertices[p * 2 + 1 + vertices.Length / 2] = floorVector + Vector3.up * height;
+        }
 
         // Triangles generation. Black magic. Definitely don't touch.
-        int len = vertices.Length; // Any modulus will *only* occur for looping lines
+        int len = vertices.Length;
         for (int i = 0; i < triangles.Length; i += 12)
         {
             int start = i / 6;
