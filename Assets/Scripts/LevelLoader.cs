@@ -99,6 +99,7 @@ public class LevelLoader : MonoBehaviour
         catch (NullReferenceException)
         {
             GameStartCanvas.DisplayError("Failed to get map.");
+            Unload();
         }
     }
 
@@ -170,10 +171,12 @@ public class LevelLoader : MonoBehaviour
 
             // Set up GameObject
             GameObject obstacle = new GameObject();
+            obstacle.transform.parent = levelContainer;
             obstacle.AddComponent<MeshFilter>().sharedMesh = mesh;
 
             Mesh newFloor = CSG.Subtract(floor, obstacle);
             GameObject composite = new GameObject("Floor");
+            composite.transform.parent = levelContainer;
             composite.AddComponent<MeshFilter>().sharedMesh = newFloor;
 
             Destroy(obstacle);
@@ -187,7 +190,6 @@ public class LevelLoader : MonoBehaviour
             floor.AddComponent<MeshRenderer>().material = floorMaterial;
         else
             floor.GetComponent<MeshRenderer>().material = floorMaterial;
-        floor.transform.parent = levelContainer;
     }
 
     private void MakeGoals()
