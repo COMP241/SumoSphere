@@ -294,8 +294,7 @@ public class LevelLoader : MonoBehaviour
         {
             uvs[i] = uvs[i + halflen] = new Vector2(horizontal, 1f);
             uvs[i + 1] = uvs[i + 1 + halflen] = new Vector2(horizontal, 0f);
-            if (i < halflen - 2)
-                horizontal += Vector2.Distance(vertices[i], vertices[i + 4]);
+            horizontal += Vector3.Distance(vertices[i], vertices[i + 2]);
         }
 
         mesh.vertices = vertices;
