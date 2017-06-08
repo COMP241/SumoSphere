@@ -73,7 +73,7 @@ public class GameController : MonoBehaviour
 
     public static void Win()
     {
-        SoundPlayer.MuteMusic();
+        SoundPlayer.MuteMusic(5f);
         timeRunning = false;
         LevelLoader.SetActive(false);
         MainCanvas.Hide();

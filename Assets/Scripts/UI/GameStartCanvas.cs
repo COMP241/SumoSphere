@@ -36,6 +36,7 @@ public class GameStartCanvas : MonoBehaviour
 
     public static void Show()
     {
+        SoundPlayer.MuteMusic(0.2f);
         instance.gameObject.SetActive(true);
     }
 }

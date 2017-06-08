@@ -25,13 +25,13 @@ public class SoundPlayer : MonoBehaviour
         instance.announcerSource.PlayOneShot(clip, volume);
     }
 
-    public static void MuteMusic()
+    public static void MuteMusic(float time = 1f)
     {
-        instance.mixer.TransitionToSnapshots(new [] {instance.musicMute}, new [] {1f}, 1f);
+        instance.mixer.TransitionToSnapshots(new [] {instance.musicMute}, new [] {1f}, time);
     }
 
-    public static void UnmuteMusic()
+    public static void UnmuteMusic(float time = 1f)
     {
-        instance.mixer.TransitionToSnapshots(new [] {instance.musicPlaying}, new [] {1f}, 1f);
+        instance.mixer.TransitionToSnapshots(new [] {instance.musicPlaying}, new [] {1f}, time);
     }
 }
