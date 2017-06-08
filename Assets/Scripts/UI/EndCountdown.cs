@@ -5,12 +5,14 @@ using UnityEngine;
 public class EndCountdown : MonoBehaviour {
 
     private CountdownCanvas CDS;
-    [SerializeField] AudioClip clip3, clip2, clip1, clipGo;
+    [SerializeField] AudioClip clip3, clip2, clip1, clipGo, backgroundMusic;
 
     public void SetCountdownNow()
     {
         GameController.SetOff();
         CountdownCanvas.Hide();
+        //plays background music
+        SoundPlayer.PlaySFX(backgroundMusic, 1f);
     }
 
     public void play3()
@@ -32,4 +34,9 @@ public class EndCountdown : MonoBehaviour {
     {
         SoundPlayer.PlaySFX(clipGo, 1f);
     }
+
+    //public void playBackground()
+    //{
+    //    SoundPlayer.PlaySFX(backgroundMusic, 1f);
+    //}
 }

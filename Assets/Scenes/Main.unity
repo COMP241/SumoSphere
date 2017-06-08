@@ -2478,6 +2478,7 @@ MonoBehaviour:
   clip2: {fileID: 8300000, guid: b1fe74f2792fadf478b81ef574f261ea, type: 3}
   clip1: {fileID: 8300000, guid: 68a4f4bc0f5b2b54a868d68102d2a000, type: 3}
   clipGo: {fileID: 8300000, guid: 3ff50b1aadfd1a649aa2a8cb81a1fdc5, type: 3}
+  backgroundMusic: {fileID: 8300000, guid: ab7c02cddc3b6834fa219854af3d4ff4, type: 3}
 --- !u!1 &1629656890
 GameObject:
   m_ObjectHideFlags: 0

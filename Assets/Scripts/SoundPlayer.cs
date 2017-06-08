@@ -19,4 +19,14 @@ public class SoundPlayer : MonoBehaviour
     {
         instance.sfxSource.PlayOneShot(clip, volume);
     }
+
+    public static void Stop()
+    {
+        instance.sfxSource.Stop();
+    }
+
+    public static void Pause()
+    {
+        instance.sfxSource.Pause();
+    }
 }
