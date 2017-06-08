@@ -14,6 +14,9 @@ public class LevelLoader : MonoBehaviour
     private ImageMap map;
     private bool loading;
 
+    // Publically Available Stuff
+    public static int MapId;
+
     // Generated Fields
     private float horizontalScale;
     private float verticalScale;
@@ -118,6 +121,7 @@ public class LevelLoader : MonoBehaviour
         }
         
         adjust = new Vector3(-horizontalScale * allScale / 2f, 0, verticalScale * allScale / 2f);
+        MapId = map.Id;
     }
 
     private void MakeSpawn()

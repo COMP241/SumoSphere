@@ -1,13 +1,13 @@
 fileFormatVersion: 2
-guid: 6e79c94613136cd4aa0c0fcabd627e5a
-timeCreated: 1496900438
+guid: 0c6ff66a7a07c8447a61faf12b1babce
+timeCreated: 1496909379
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: Camera
-    100002: Lamp
-    100004: //RootNode
+    100002: //RootNode
+    100004: Lamp
     100006: Sphere
     100008: Sphere.001
     100010: Sphere.002
@@ -15,8 +15,8 @@ ModelImporter:
     100014: Torus
     100016: Torus.001
     400000: Camera
-    400002: Lamp
-    400004: //RootNode
+    400002: //RootNode
+    400004: Lamp
     400006: Sphere
     400008: Sphere.001
     400010: Sphere.002

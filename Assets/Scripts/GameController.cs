@@ -7,7 +7,7 @@ public class GameController : MonoBehaviour
 
     // Generated Fields
     private static Vector3 spawnPoint = Vector3.up * 0.5f;
-    private static float time = 0f;
+    public static float time = 0f;
     public static bool timeRunning = false;
 
     // Editor Fields

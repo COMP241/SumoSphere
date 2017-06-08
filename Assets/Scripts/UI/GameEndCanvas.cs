@@ -7,6 +7,7 @@ public class GameEndCanvas : MonoBehaviour
 
     // Editor Fields
     [SerializeField] private Text timeText;
+    [SerializeField] private ScoreSubmit scoreSubmit;
 
     private void Start()
     {
@@ -29,6 +30,7 @@ public class GameEndCanvas : MonoBehaviour
 
     public static void Show()
     {
+        instance.scoreSubmit.Enable();
         instance.gameObject.SetActive(true);
     }
 }
