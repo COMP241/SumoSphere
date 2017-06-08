@@ -1,12 +1,17 @@
 ﻿using UnityEngine;
+using UnityEngine.Audio;
 
 public class SoundPlayer : MonoBehaviour
 {
     private static SoundPlayer instance;
 
     [Header("Sources")]
-    [SerializeField] private AudioSource sfxSource;
+    [SerializeField] private AudioSource announcerSource;
 
+    [Header("Music")]
+    [SerializeField] private AudioMixer mixer;
+    [SerializeField] private AudioMixerSnapshot musicPlaying, musicMute;
+    
     private void Start()
     {
         if (instance == null)
@@ -14,19 +19,19 @@ public class SoundPlayer : MonoBehaviour
         else
             Destroy(gameObject);
     }
-
-    public static void PlaySFX(AudioClip clip, float volume)
+    
+    public static void PlayAnnouncer(AudioClip clip, float volume)
     {
-        instance.sfxSource.PlayOneShot(clip, volume);
+        instance.announcerSource.PlayOneShot(clip, volume);
     }
 
-    public static void Stop()
+    public static void MuteMusic()
     {
-        instance.sfxSource.Stop();
+        instance.mixer.TransitionToSnapshots(new [] {instance.musicMute}, new [] {1f}, 1f);
     }
 
-    public static void Pause()
+    public static void UnmuteMusic()
     {
-        instance.sfxSource.Pause();
+        instance.mixer.TransitionToSnapshots(new [] {instance.musicPlaying}, new [] {1f}, 1f);
     }
 }

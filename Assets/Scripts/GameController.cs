@@ -42,7 +42,7 @@ public class GameController : MonoBehaviour
 
     public void RestartGame()
     {
-        SoundPlayer.Stop();
+        SoundPlayer.MuteMusic();
         Respawn();
         LevelLoader.SetActive(true);
         timeRunning = false;
@@ -73,7 +73,7 @@ public class GameController : MonoBehaviour
 
     public static void Win()
     {
-        SoundPlayer.Stop();
+        SoundPlayer.MuteMusic();
         timeRunning = false;
         LevelLoader.SetActive(false);
         MainCanvas.Hide();
@@ -83,7 +83,7 @@ public class GameController : MonoBehaviour
 
     public void LoadNew()
     {
-        SoundPlayer.Stop();
+        SoundPlayer.MuteMusic();
         LevelLoader.Unload();
         LevelLoader.SetActive(false);
         MainCanvas.Hide();
