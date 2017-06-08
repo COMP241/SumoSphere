@@ -7,6 +7,8 @@ class MainCanvas : MonoBehaviour
 
     // Editor Fields
     [SerializeField] private Text timeText;
+    [SerializeField] private GameObject pauseButton;
+    [SerializeField] private GameObject countdownCanvas;
 
     private void Start()
     {
@@ -15,6 +17,11 @@ class MainCanvas : MonoBehaviour
         else
             Destroy(gameObject);
         Hide();
+    }
+
+    private void Update()
+    {
+        pauseButton.SetActive(!countdownCanvas.active);
     }
 
     public static void SetTime(float seconds)
