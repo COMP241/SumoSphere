@@ -7,6 +7,7 @@ public class CountdownCanvas : MonoBehaviour
 
     private static CountdownCanvas instance;
     [SerializeField] private Animator countdownAnimator;
+    [SerializeField] private SoundPlayer countdownSound;
 
     private void Start()
     {

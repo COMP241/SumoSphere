@@ -2403,7 +2403,7 @@ RectTransform:
   m_GameObject: {fileID: 1612025305}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 1742645969}
   m_RootOrder: 0
@@ -2474,6 +2474,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59c1e18fad6a94447b6fe32dcee652e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clip3: {fileID: 8300000, guid: 23ef525e54bde884fac3901ff37f7688, type: 3}
+  clip2: {fileID: 8300000, guid: b1fe74f2792fadf478b81ef574f261ea, type: 3}
+  clip1: {fileID: 8300000, guid: 68a4f4bc0f5b2b54a868d68102d2a000, type: 3}
+  clipGo: {fileID: 8300000, guid: 3ff50b1aadfd1a649aa2a8cb81a1fdc5, type: 3}
 --- !u!1 &1629656890
 GameObject:
   m_ObjectHideFlags: 0
@@ -2900,6 +2904,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   countdownAnimator: {fileID: 1612025307}
+  countdownSound: {fileID: 0}
 --- !u!1 &1766774966
 GameObject:
   m_ObjectHideFlags: 0
