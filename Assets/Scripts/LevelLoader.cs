@@ -19,6 +19,7 @@ public class LevelLoader : MonoBehaviour
     private float verticalScale;
     private Vector3 adjust;
     private GameObject floor;
+    private Vector3 spawnPoint;
 
     // Editor Fields
     [Header("Function")]
@@ -133,7 +134,8 @@ public class LevelLoader : MonoBehaviour
         }
 
         Point averagePoint = spawnLine.AveragePoint();
-        GameController.SetSpawn(PointToWorldSpace(averagePoint) + Vector3.up * 0.5f);
+        spawnPoint = PointToWorldSpace(averagePoint);
+        GameController.SetSpawn(spawnPoint + Vector3.up * 0.5f);
         Player p = playContainer.GetComponentInChildren<Player>();
         p.transform.localScale = Vector3.one * 2f * PointScaleToWorldScale(Mathf.Sqrt(spawnLine.AverageSqrDistanceFrom(averagePoint)));
     }
@@ -204,7 +206,8 @@ public class LevelLoader : MonoBehaviour
             Point averagePoint = line.AveragePoint();
             GameObject goal = Instantiate(goalPrefab, PointToWorldSpace(averagePoint), Quaternion.identity, levelContainer);
             float scale = 2f * PointScaleToWorldScale(Mathf.Sqrt(line.AverageSqrDistanceFrom(averagePoint)));
-            goal.transform.localScale = new Vector3(scale, 1, scale);
+            goal.transform.localScale = new Vector3(scale, goal.transform.localScale.y, scale);
+            goal.transform.rotation = Quaternion.LookRotation(spawnPoint);
         }
     }
 

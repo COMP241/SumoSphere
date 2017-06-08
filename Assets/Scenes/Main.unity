@@ -274,7 +274,7 @@ MonoBehaviour:
   levelContainer: {fileID: 2016279458}
   playContainer: {fileID: 424389201}
   allScale: 10
-  goalPrefab: {fileID: 1497313492986940, guid: 227c513deaba3cf4eb96199735e6a940, type: 2}
+  goalPrefab: {fileID: 1852601861758602, guid: 227c513deaba3cf4eb96199735e6a940, type: 2}
   lineMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   floorMaterial: {fileID: 2100000, guid: b8e1008d3522aec48b159a5db6df6231, type: 2}
   wallMaterial: {fileID: 2100000, guid: 3605840c09d7b2844b02fdfdbd1823f9, type: 2}
