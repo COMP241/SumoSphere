@@ -21,7 +21,7 @@ class MainCanvas : MonoBehaviour
 
     private void Update()
     {
-        pauseButton.SetActive(!countdownCanvas.active);
+        pauseButton.SetActive(!countdownCanvas.activeSelf);
     }
 
     public static void SetTime(float seconds)
