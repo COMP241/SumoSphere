@@ -32,5 +32,6 @@ public class Player : MonoBehaviour
 
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
+        gameObject.transform.rotation = Quaternion.identity;
     }
 }
